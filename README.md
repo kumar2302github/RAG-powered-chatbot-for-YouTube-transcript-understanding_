@@ -1,29 +1,48 @@
 # 📺 RAG-powered Chatbot for YouTube Transcript Understanding
 
-A modular RAG-powered chatbot for querying YouTube video transcripts using embeddings, vector search, and large language models.
+*A modular, Retrieval-Augmented Generation (RAG) system to query YouTube video transcripts using embeddings, vector search, and large language models.*
 
 ---
 
 ## 🧭 Overview
 
-This project allows you to *chat with any public YouTube video* by asking questions in natural language. It retrieves relevant parts of the transcript using a *Retrieval-Augmented Generation (RAG)* pipeline, then generates fluent answers using a *language model* like Gemini.
+This project allows you to **chat with any public YouTube video** in natural language. It extracts the video transcript, indexes it intelligently, and returns responses using a **hybrid retrieval system** and a **language model** like Gemini.
 
-The conversational tone of the chatbot is fully *customizable via prompt engineering* — from poetic to technical, from mentor-style to casual assistant.
+The conversational tone of responses is **customizable through prompt engineering** — whether poetic, technical, or instructional.
 
 ---
 
 ## 🚀 Features
 
 - 💬 Ask questions about any YouTube video
-- 🎯 Uses *RAG* with hybrid retrieval: score filtering + clustering + MMR
-- 🧠 Embeds text with sentence-transformers
-- 🧲 Stores embeddings locally with *ChromaDB*
-- 🎛 Tune chunk size, retrieval diversity, and top-k relevance
-- 🔐 Manages secrets via .streamlit/secrets.toml
-- ♻ Vector database reset & deletion from the UI
-- 🧵 Maintains chat history during the session
-- ✅ Modular, extensible architecture
+- 🔎 Hybrid retrieval pipeline (relevance + diversity)
+- 🧠 Uses `sentence-transformers` for semantic embeddings
+- 🧲 ChromaDB for fast, local vector storage
+- 🔧 Sidebar to adjust:
+  - Top-K relevant chunks
+  - Score threshold
+  - Chunk size & overlap
+  - MMR lambda for diversity control
+- 🔁 Reset and delete vector stores
+- 🧵 Maintains session-based chat history
+- 📦 Modular architecture for easy extension
 
+---
+
+## 📂Project Structure: RAG_CHAT
+
+RAG_CHAT/
+├── main/
+│   ├── app.py                # Streamlit app
+│   ├── rag.py                # RAG logic: embedding, retrieval, generation
+│   └── transcription.py      # YouTube transcript fetcher
+│
+├── .streamlit/
+│   └── secrets.toml          # Gemini API key (private, not pushed)
+│
+├── rag_test.ipynb            # Experimental notebook for testing logic
+├── README.md                 # Full project documentation
+├── requirements.txt          # Dependency list for pip installation
 ---
 
 ## ⚙ Getting Started
@@ -31,7 +50,7 @@ The conversational tone of the chatbot is fully *customizable via prompt enginee
 ### 🛠 *1. Clone the Repository*
 
 bash
-git clone https://github.com/kumar2302github/RAG-powered-chatbot-for-YouTube-transcript-understanding.git
+git clone https://github.com/kumar2302github/RAG-powered-chatbot-for-YouTube-transcript-understanding_.git
 cd RAG-powered-chatbot-for-YouTube-transcript-understanding
 
 
