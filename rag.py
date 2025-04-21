@@ -1,5 +1,5 @@
 #library for vectore store,remove duplicates cosine simalrity and clustering
-import os  #Create/delete folders like vector_store/, handle file paths
+import os  
 import logging
 import shutil
 import numpy as np
@@ -21,7 +21,7 @@ import google.generativeai as genai
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 VECTOR_DB_DIR = "vector_store"
-EMBEDDING_MODEL = "sentence-transformers/all-mpnet-base-v2"
+EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 LLM_MODEL = "gemini-1.5-flash"
 
 # Load embedding model 
