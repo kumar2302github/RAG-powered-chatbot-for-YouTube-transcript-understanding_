@@ -21,12 +21,12 @@ import google.generativeai as genai
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 VECTOR_DB_DIR = "vector_store"
-EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
+EMBEDDING_MODEL = "gemini-embedding"
 LLM_MODEL = "gemini-1.5-flash"
-
+genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 # Load embedding model 
 try:
-    embedding_model = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
+    embedding_model = genai.GenerativeModel("models/embedding-001")
     logging.info("Embedding model loaded successfully")
 except Exception as e:
     logging.error("Failed to load embedding model", exc_info=True)
