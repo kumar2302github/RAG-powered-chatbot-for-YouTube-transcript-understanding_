@@ -1,5 +1,5 @@
 #library for vectore store,remove duplicates cosine simalrity and clustering
-import os  
+import os 
 import logging
 import shutil
 import numpy as np
@@ -21,12 +21,12 @@ import google.generativeai as genai
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 VECTOR_DB_DIR = "vector_store"
-EMBEDDING_MODEL = "gemini-embedding"
+EMBEDDING_MODEL = "sentence-transformers/all-mpnet-base-v2"
 LLM_MODEL = "gemini-1.5-flash"
-genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+
 # Load embedding model 
 try:
-    embedding_model = genai.GenerativeModel("models/embedding-001")
+    embedding_model = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
     logging.info("Embedding model loaded successfully")
 except Exception as e:
     logging.error("Failed to load embedding model", exc_info=True)
@@ -216,18 +216,18 @@ def cluster_and_select_indices(docs, embeddings, min_cluster_size=2):
 
 
 def hybrid_retrieve(vectordb, query, top_k=5, score_threshold=0.4, lambda_mult=0.7, max_tokens=1000):
-    # Make sure the vector DB and embedding model are ready
+    # Making sure the vector DB and embedding model are ready
     if embedding_model is None or not isinstance(vectordb, Chroma):
         return [], []
 
     try:
-        # Step 1: Convert the user query into an embedding vector
+        # Step 1: Converting the user query into an embedding vector
         query_embedding = embedding_model.embed_query(query)
 
-        # Step 2: Get initial results from the vector DB having more than k chunks
+        # Step 2: initialising results from the vector DB having more than k chunks
         results = vectordb.similarity_search_with_relevance_scores(query, k=max(top_k * 5, 20))
 
-        # Step 3: Filter out bad matches (keep only results with low score)
+        # Step 3: Filtering out bad matches 
         filtered_results = []
         for doc, score in results:
             if score <= score_threshold:
@@ -248,14 +248,14 @@ def hybrid_retrieve(vectordb, query, top_k=5, score_threshold=0.4, lambda_mult=0
         texts_to_embed = [doc.page_content for doc in filtered_docs]
         filtered_embeddings = embedding_model.embed_documents(texts_to_embed)
 
-        # Step 5: Cluster and select representatives
+        # Step 5: Clustering and selecting indices
         selected_indices = cluster_and_select_indices(filtered_docs, filtered_embeddings)
 
         unique_docs = [filtered_docs[i] for i in selected_indices]
         unique_embeddings = [filtered_embeddings[i] for i in selected_indices]
         unique_scores = [filtered_scores[i] for i in selected_indices]
 
-        # Step 6: Apply Maximal Marginal Relevance to select top diverse and relevant chunks
+        # Step 6: Appling Maximal Marginal Relevance to select top diverse and relevant chunks
         mmr_embeddings = [np.array(embedding, dtype=np.float32) for embedding in unique_embeddings]
         mmr_indices = maximal_marginal_relevance(
             np.array(query_embedding, dtype=np.float32),
@@ -298,11 +298,10 @@ def generate_response(relevant_texts: List[str], user_query: str) -> str:
 
     context = "\n\n---\n\n".join(relevant_texts)
     prompt = f"""
-Answer only using the Transcript below. If the answer isn’t there, reply: "I don't know."
-You are Carl Sagan—poetic, insightful, and endlessly curious.
-Explain complex ideas with real-world analogies and clear, simple English.
-Rich with meaning—each line should spark curiosity and illuminate.
-Speak to a bright, eager mind.
+You’re Carl Sagan if he were a chill classmate.
+Use only the transcript (“our notebook”) to answer.
+Explain ideas clearly, using simple words, real-world analogies, and a poetic tone. Keep answers short to medium-length.
+If it’s not in the notes, just say: “Not in my notes, bro.”
 
 
 Transcript:
